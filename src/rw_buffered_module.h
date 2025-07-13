@@ -10,8 +10,8 @@ class RWBufferedModule : public BaseModule<ModuleTypeT>
 public:
     // Set either or both; pass nullptr for unused buffer
     RWBufferedModule(ModuleTypeT type, uint8_t instance,
-                   BaseChannel *inBuf = nullptr,
-                   BaseChannel *outBuf = nullptr)
+                     BaseChannel *inBuf = nullptr,
+                     BaseChannel *outBuf = nullptr)
         : BaseModule<ModuleTypeT>(type, instance),
           inBuf_(inBuf),
           outBuf_(outBuf)
@@ -56,13 +56,13 @@ public:
     }
 
 protected:
-    // For use in your derived class task loop or ISR
+    // For use inside the module
     size_t recv(void *buf, size_t maxLen, TickType_t ticksToWait = portMAX_DELAY)
     {
         return inBuf_ ? inBuf_->pull(buf, maxLen, ticksToWait) : 0;
     }
 
-    bool push(const void *buf, size_t len, TickType_t ticksToWait = 0)
+    bool send(const void *buf, size_t len, TickType_t ticksToWait = 0)
     {
         return outBuf_ ? outBuf_->push(buf, len, ticksToWait) : false;
     }
