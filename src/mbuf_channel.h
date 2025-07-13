@@ -6,6 +6,7 @@
 #include "base_channel.h"
 #include <freertos/semphr.h>
 #include <algorithm>
+#include <etl/algorithm.h>
 
 class MBufChannel : public BaseChannel
 {
@@ -20,7 +21,7 @@ public:
         : mbuf_(xMessageBufferCreate(channelSizeBytes)),
           ownBuf_(true),
           maxMsgSizeBytes_(maxMsgSizeBytes),
-          minMsgSizeBytes_(std::max<size_t>(1, minMsgSizeBytes))
+          minMsgSizeBytes_(etl::max<size_t>(1, minMsgSizeBytes))
 
     {
         setupMutexes(threadSafeWrite, threadSafeRead);
