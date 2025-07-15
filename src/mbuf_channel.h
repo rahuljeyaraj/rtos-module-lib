@@ -65,7 +65,7 @@ public:
     {
         LockGuard g(mtxRead_, ticksToWait);
         if (!g.acquired())
-            return false;
+            return 0;
         size_t len = xMessageBufferReceive(mbuf_, buf, maxLen, ticksToWait);
         if (len < minMsgSizeBytes_ || len > maxMsgSizeBytes_)
             return 0; // Drop invalid message (message is removed from buffer)
