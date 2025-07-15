@@ -79,3 +79,10 @@ private:
     etl::flat_map<Key, Value, MAX_MODULES> map_;
     mutable SemaphoreHandle_t mtx_;
 };
+
+template <typename ModuleClass, typename ModuleTypeT>
+ModuleClass *findModuleAs(ModuleTypeT type, uint8_t instance)
+{
+    return static_cast<ModuleClass *>(
+        ModuleRegistry<ModuleTypeT>::instance().find(ModuleId<ModuleTypeT>{type, instance}));
+}
