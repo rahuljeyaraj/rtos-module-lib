@@ -48,6 +48,9 @@ public:
     /// Spawns the module's FreeRTOS task.
     bool start() override
     {
+        if (taskHandle_ != nullptr)
+            return false; // Task already created/running.
+
         return xTaskCreate(&TaskModule::taskEntry,
                            taskName_, stackSize_, this,
                            priority_, &taskHandle_) == pdPASS;
@@ -77,9 +80,13 @@ private:
         auto *self = static_cast<TaskModule *>(param);
         if (self->onStart())
             self->run();
+        self->onEnd();
         self->taskHandle_ = nullptr;
         vTaskDelete(nullptr);
     }
+
+    /// Optional hook for shutdown/cleanup logic (override in subclass)
+    virtual void onEnd() { return; }
 
 protected:
     char taskName_[32];
