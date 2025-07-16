@@ -28,8 +28,8 @@ public:
           stackSize_(stackSize),
           priority_(priority)
     {
-        snprintf(taskName_, sizeof(taskName_), "mod_%d_%d",
-                 static_cast<int>(type), static_cast<int>(instance));
+        snprintf(taskName_, sizeof(taskName_), "module_%d_%d_task",
+                 static_cast<int>(id.type), static_cast<int>(id.instance));
     }
 
     /// Destroys the AsyncModule and releases resources.
@@ -72,6 +72,11 @@ protected:
     /// Called every idle tick.
     virtual void onIdleTick() {}
 
+    char taskName_[32];
+
+    /// Optional hook for shutdown/cleanup logic (override in subclass)
+    virtual void onEnd() { return; }
+
 private:
     /// Static entry point for the FreeRTOS task.
     static void taskEntry(void *param)
@@ -84,11 +89,6 @@ private:
         vTaskDelete(nullptr);
     }
 
-    /// Optional hook for shutdown/cleanup logic (override in subclass)
-    virtual void onEnd() { return; }
-
-protected:
-    char taskName_[32];
     uint32_t stackSize_;
     UBaseType_t priority_;
     TaskHandle_t taskHandle_ = nullptr;
