@@ -9,10 +9,10 @@ class RWBufferedModule : public BaseModule<ModuleTypeT>
 {
 public:
     // Set either or both; pass nullptr for unused buffer
-    RWBufferedModule(ModuleTypeT type, uint8_t instance,
+    RWBufferedModule(const ModuleId<ModuleTypeT> &id,
                      BaseChannel *inBuf = nullptr,
                      BaseChannel *outBuf = nullptr)
-        : BaseModule<ModuleTypeT>(type, instance),
+        : BaseModule<ModuleTypeT>(id),
           inBuf_(inBuf),
           outBuf_(outBuf)
     {

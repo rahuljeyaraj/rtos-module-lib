@@ -19,13 +19,12 @@ template <typename ModuleTypeT>
 class TaskModule : public RWBufferedModule<ModuleTypeT>
 {
 public:
-    TaskModule(ModuleTypeT type,
-               uint8_t instance,
+    TaskModule(const ModuleId<ModuleTypeT> &id,
                BaseChannel *inBuf = nullptr,
                BaseChannel *outBuf = nullptr,
                uint32_t stackSize = 4096,
                UBaseType_t priority = 1)
-        : RWBufferedModule<ModuleTypeT>(type, instance, inBuf, outBuf),
+        : RWBufferedModule<ModuleTypeT>(id, inBuf, outBuf),
           stackSize_(stackSize),
           priority_(priority)
     {

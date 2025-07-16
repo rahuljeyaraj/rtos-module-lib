@@ -80,9 +80,8 @@ private:
     mutable SemaphoreHandle_t mtx_;
 };
 
-template <typename ModuleClass, typename ModuleTypeT>
-ModuleClass *findModuleAs(ModuleTypeT type, uint8_t instance)
+template <typename ModuleTypeT>
+inline BaseModule<ModuleTypeT> *lookup(const ModuleId<ModuleTypeT> &id)
 {
-    return static_cast<ModuleClass *>(
-        ModuleRegistry<ModuleTypeT>::instance().find(ModuleId<ModuleTypeT>{type, instance}));
+    return ModuleRegistry<ModuleTypeT>::instance().find(id);
 }

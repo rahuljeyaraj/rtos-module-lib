@@ -13,12 +13,16 @@
  * Handles module registration and provides core interface.
  * Concrete classes must implement write() and read().
  */
+// TODO: Consider making InstanceType a template parameter for stricter type safety.
+//       WARNING: Templating on InstanceType may cause code bloat if used with many unique instance types.
+//       It will also force a separate ModuleRegistry instance for each unique (ModuleTypeT, InstanceTypeT) pair.
+//       For most use-cases, retain uint8_t as the instance type for simplicity and minimal code size.
 template <typename ModuleTypeT>
 class BaseModule
 {
 public:
     /// Construct a Module and register it.
-    BaseModule(ModuleTypeT type, uint8_t instance) : moduleId_{type, instance}
+    BaseModule(const ModuleId<ModuleTypeT> &id) : moduleId_{id}
     {
         bool reg_ok = ModuleRegistry<ModuleTypeT>::instance().registerModule(this);
         assert(reg_ok && "Module registry is full or duplicate module id!");
@@ -55,5 +59,6 @@ protected:
     /// Optional hook for startup logic (override in subclass)
     virtual bool onStart() { return true; }
 
-    const ModuleId<ModuleTypeT> moduleId_;
+    /// Unique type+instance identifier for this module.
+    const ModuleId<ModuleTypeT> moduleId_; // Store by value, not by reference, to avoid dangling references.
 };
