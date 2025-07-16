@@ -47,7 +47,7 @@ public:
     uint8_t instance() const { return moduleId_.instance; }
 
     /// Returns the ModuleId for this module.
-    const ModuleId<ModuleTypeT> &moduleId() const { return moduleId_; }
+    const ModuleId<ModuleTypeT> moduleId() const { return moduleId_; }
 
     /// Write to the module.
     virtual bool write(const void *buf, size_t len, TickType_t ticksToWait = 0) { return false; }
@@ -60,5 +60,5 @@ protected:
     virtual bool onStart() { return true; }
 
     /// Unique type+instance identifier for this module.
-    const ModuleId<ModuleTypeT> moduleId_; // Store by value, not by reference, to avoid dangling references.
+    const ModuleId<ModuleTypeT> moduleId_;
 };
