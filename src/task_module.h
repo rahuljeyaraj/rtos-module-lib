@@ -19,7 +19,7 @@ template <typename ModuleTypeT>
 class TaskModule : public RWBufferedModule<ModuleTypeT>
 {
 public:
-    TaskModule(const ModuleId<ModuleTypeT> &id,
+    TaskModule(const ModuleId<ModuleTypeT> id,
                BaseChannel *inBuf = nullptr,
                BaseChannel *outBuf = nullptr,
                uint32_t stackSize = 4096,

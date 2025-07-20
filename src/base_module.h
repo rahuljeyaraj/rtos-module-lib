@@ -23,7 +23,7 @@ class BaseModule
 {
 public:
     /// Construct a Module and register it.
-    BaseModule(const ModuleId<ModuleTypeT> &id) : moduleId_{id}
+    BaseModule(const ModuleId<ModuleTypeT> id) : moduleId_{id}
     {
         bool reg_ok = ModuleRegistry<ModuleTypeT>::instance().registerModule(this);
         assert(reg_ok && "Module registry is full or duplicate module id!");
@@ -48,7 +48,7 @@ public:
     uint8_t instance() const { return moduleId_.instance; }
 
     /// Returns the module's name.
-    std::string_view name() const { return moduleId_.name; }
+    constexpr const char *name() const noexcept { return moduleId_.name.data(); }
 
     /// Returns the ModuleId for this module.
     const ModuleId<ModuleTypeT> moduleId() const { return moduleId_; }

@@ -13,6 +13,8 @@ struct ModuleId
     uint8_t instance;
     std::string_view name;
 
+    constexpr ModuleId() noexcept = default;
+
     constexpr ModuleId(ModuleTypeT t,
                        uint8_t i,
                        std::string_view n) noexcept
