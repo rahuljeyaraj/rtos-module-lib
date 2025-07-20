@@ -1,4 +1,6 @@
 #pragma once
+#include <cstdint>
+#include <string_view>
 
 /**
  * @brief Unique identifier for a module (type + instance).
@@ -9,6 +11,12 @@ struct ModuleId
 {
     ModuleTypeT type;
     uint8_t instance;
+    std::string_view name;
+
+    constexpr ModuleId(ModuleTypeT t,
+                       uint8_t i,
+                       std::string_view n) noexcept
+        : type(t), instance(i), name(n) {}
 
     // Enables value comparison in registries
     constexpr bool operator==(const ModuleId &other) const

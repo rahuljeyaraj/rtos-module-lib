@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <cstddef>
 #include <cassert>
+#include <string_view>
 #include "module_id.h"
 #include "module_registry.h"
 
@@ -45,6 +46,9 @@ public:
 
     /// Returns the module's instance number.
     uint8_t instance() const { return moduleId_.instance; }
+
+    /// Returns the module's name.
+    std::string_view name() const { return moduleId_.name; }
 
     /// Returns the ModuleId for this module.
     const ModuleId<ModuleTypeT> moduleId() const { return moduleId_; }
