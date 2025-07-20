@@ -1,23 +1,27 @@
-# RtosModuleLib
+# rtos-module-lib
 
-**RtosModuleLib** is a header-only C++ library providing modular, reusable components  
-for any RTOS-based embedded system. Designed to be lightweight and flexible, it  
-enables clean, maintainable architecture similar to hardware design modules.
+C++ toolkit for building lightweight, message-driven modules on FreeRTOS—usable from both ESP-IDF and Arduino-ESP32.
 
-## Features
+* **Zero runtime cost** – everything is templates and `inline`.
+* **Module registry** – look up modules by _type_ + _instance_ ID.
+* **Plug-and-play channels** – `MessageBuffer`, `Queue`, or your own `BaseChannel`.
+* **Task modules** – spin an RTOS task with one line.
+* **No heap surprises** – ETL containers + explicit FreeRTOS calls only.
 
-- Header-only for easy integration  
-- Designed for any RTOS (not limited to FreeRTOS)  
-- Message and task module abstractions  
-- Modular, self-contained components inspired by Verilog modules  
+## Features at a glance
 
-## Installation
+| Class                  | What it does                                             |
+|------------------------|----------------------------------------------------------|
+| `BaseModule`           | Core ID + registry hooks                                 |
+| `ModuleRegistry`       | O(1) lookup for modules (thread-safe)                    |
+| `RWBufferedModule`     | Drop-in Rx/Tx buffering via any `BaseChannel`            |
+| `TaskModule`           | Adds its own FreeRTOS task + idle tick loop              |
+| `MBufChannel`          | `xMessageBuffer` wrapper with optional mutexes           |
+| `QueueChannel`         | `xQueue` wrapper                                         |
+| `ModuleId`             | Tiny POD: type + instance + human name                   |
 
-Add the following to your `platformio.ini`:
+## Install (PlatformIO)
 
 ```ini
-[env:your_env]
-platform = <your_platform>
-framework = freertos
 lib_deps =
-  rahuljeyaraj/RtosModuleLib
+  rahuljeyaraj/rtos-module-lib@^1.0.0

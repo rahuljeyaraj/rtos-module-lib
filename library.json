@@ -1,18 +1,17 @@
 {
-  "name": "RtosModuleLib",
+  "name": "rtos-module-lib",
   "version": "1.0.0",
-  "description": "Header-only C++ library providing modular, reusable components for any RTOS-based embedded system.",
+  "description": "C++ toolkit for building lightweight, message-driven modules on FreeRTOS—usable from both ESP-IDF and Arduino-ESP32.",
   "keywords": [
     "rtos",
     "module",
     "embedded",
-    "header-only",
     "freertos",
     "reusable"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/rahuljeyaraj/RtosModuleLib.git"
+    "url": "https://github.com/rahuljeyaraj/rtos-module-lib.git"
   },
   "license": "MIT",
   "authors": [
@@ -21,13 +20,19 @@
       "maintainer": true
     }
   ],
-  "headers": [
-    "*.h"
+  "frameworks": [
+    "espidf",
+    "arduino"
   ],
-  "build": {
-    "srcFilter": [
-      "+<*.h>",
-      "+<*.cpp>"
+  "platforms": [
+    "espressif32"
+  ],
+  "dependencies": {
+    "etlcpp/Embedded Template Library": "^20.39.4"
+  },
+  "export": {
+    "include": [
+      "include"
     ]
   }
 }
