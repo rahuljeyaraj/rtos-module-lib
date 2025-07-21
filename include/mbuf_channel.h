@@ -3,8 +3,8 @@
 #include <cstddef>
 #include "freertos/FreeRTOS.h"
 #include "freertos/message_buffer.h"
+#include "freertos/semphr.h"
 #include "base_channel.h"
-#include <freertos/semphr.h>
 #include <algorithm>
 #include <etl/algorithm.h>
 
@@ -60,9 +60,23 @@ public:
         return xMessageBufferSend(mbuf_, buf, len, ticksToWait) == len;
     }
 
+    /// For use ONLY in ISR context
+    bool pushFromISR(const void *buf, size_t len, BaseType_t *pTaskWoken = nullptr) override
+    {
+        // Enforce ISR-only usage
+        configASSERT(xPortInIsrContext());
+
+        if (len < minMsgSizeBytes_ || len > maxMsgSizeBytes_)
+            return false;
+
+        size_t sent = xMessageBufferSendFromISR(mbuf_, buf, len, pTaskWoken);
+        return sent == len;
+    }
+
     // Issue: May get blocked up to 2 * ticksToWait (mutex wait + buffer wait)
     size_t pull(void *buf, size_t maxLen, TickType_t ticksToWait = 0) override
     {
+        size_t free_bytes = xMessageBufferSpacesAvailable(mbuf_);
         LockGuard g(mtxRead_, ticksToWait);
         if (!g.acquired())
             return 0;

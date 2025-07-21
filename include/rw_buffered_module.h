@@ -49,6 +49,12 @@ public:
         return inBuf_ ? inBuf_->push(buf, len, ticksToWait) : false;
     }
 
+    // For ISR to write data
+    bool writeFromISR(const void *buf, size_t len, BaseType_t *pTaskWoken = nullptr)
+    {
+        return inBuf_ ? inBuf_->pushFromISR(buf, len, pTaskWoken) : false;
+    }
+
     // For polling or streaming data out
     bool read(void *buf, size_t maxLen, TickType_t ticksToWait = 0) override
     {
