@@ -1,9 +1,10 @@
 #pragma once
 
+#include <cstddef>
+
 #include "etl/flat_map.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
-#include <cstddef>
 #include "module_id.h"
 
 #ifndef MAX_MODULES
@@ -14,65 +15,59 @@
 template <typename ModuleTypeT>
 class BaseModule;
 
+namespace rtos_module {
 // Simple LockGuard for FreeRTOS mutexes (always non-optional)
-struct LockGuard
-{
+struct LockGuard {
     SemaphoreHandle_t mtx;
-    LockGuard(SemaphoreHandle_t m) : mtx(m)
-    {
+    LockGuard(SemaphoreHandle_t m) : mtx(m) {
         xSemaphoreTake(mtx, portMAX_DELAY);
     }
-    ~LockGuard() { xSemaphoreGive(mtx); }
+    ~LockGuard() {
+        xSemaphoreGive(mtx);
+    }
 };
+}  // namespace rtos_module
 
 template <typename ModuleTypeT>
-class ModuleRegistry
-{
-public:
+class ModuleRegistry {
+   public:
     using Key = ModuleId<ModuleTypeT>;
     using Value = BaseModule<ModuleTypeT> *;
 
-    static ModuleRegistry &instance()
-    {
+    static ModuleRegistry &instance() {
         static ModuleRegistry inst;
         return inst;
     }
 
-    bool registerModule(Value mod)
-    {
-        LockGuard lock(mtx_);
+    bool registerModule(Value mod) {
+        rtos_module::LockGuard lock(mtx_);
         auto res = map_.insert(etl::make_pair(mod->moduleId(), mod));
-        return res.second; // false if duplicate or full
+        return res.second;  // false if duplicate or full
     }
 
-    bool unregisterModule(const Key &id)
-    {
-        LockGuard lock(mtx_);
+    bool unregisterModule(const Key &id) {
+        rtos_module::LockGuard lock(mtx_);
         return map_.erase(id) != 0;
     }
 
-    Value find(const Key &id)
-    {
-        LockGuard lock(mtx_);
+    Value find(const Key &id) {
+        rtos_module::LockGuard lock(mtx_);
         auto it = map_.find(id);
         return (it != map_.end()) ? it->second : nullptr;
     }
 
-    size_t count() const
-    {
+    size_t count() const {
         // ETL containers are not thread-safe for concurrent readers/writers,
         // so we lock here as well for safety.
-        LockGuard lock(mtx_);
+        rtos_module::LockGuard lock(mtx_);
         return map_.size();
     }
 
-private:
-    ModuleRegistry()
-    {
+   private:
+    ModuleRegistry() {
         mtx_ = xSemaphoreCreateMutex();
     }
-    ~ModuleRegistry()
-    {
+    ~ModuleRegistry() {
         vSemaphoreDelete(mtx_);
     }
 
@@ -81,7 +76,6 @@ private:
 };
 
 template <typename ModuleTypeT>
-inline BaseModule<ModuleTypeT> *lookup(const ModuleId<ModuleTypeT> &id)
-{
+inline BaseModule<ModuleTypeT> *lookup(const ModuleId<ModuleTypeT> &id) {
     return ModuleRegistry<ModuleTypeT>::instance().find(id);
 }

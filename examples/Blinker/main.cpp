@@ -4,36 +4,32 @@
  */
 
 #include <Arduino.h>
+
 #include "task_module.h"
 
-enum class MyType : uint8_t
-{
-    Blinker
-};
+enum class MyType : uint8_t { Blinker };
 
-class Blinker : public TaskModule<MyType>
-{
-public:
+class Blinker : public TaskModule<MyType> {
+   public:
     Blinker() : TaskModule({MyType::Blinker, 0, "Blinker"}) {}
 
-protected:
-    bool onStart() override
-    {
+   protected:
+    bool onTaskStart() override {
         pinMode(LED_BUILTIN, OUTPUT);
-        return true; // task starts if true
+        return true;  // task starts if true
     }
 
-    void run() override
-    {
-        for (;;)
-        {
+    void run() override {
+        for (;;) {
             digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
             vTaskDelay(pdMS_TO_TICKS(500));
         }
     }
 };
 
-Blinker blinky; // auto-registers with ModuleRegistry
+Blinker blinky;  // auto-registers with ModuleRegistry
 
-void setup() { blinky.start(); }
-void loop() {} // everything handled in the task
+void setup() {
+    blinky.start();
+}
+void loop() {}  // everything handled in the task
